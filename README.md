@@ -1,6 +1,6 @@
 #templates_ssr
 
-Blog estático com Python!
+Blog dinâmico com Python!
 ---------------------------------------------------------------------------------------------------------------------------------------
 Gerando páginas HTML para um blog usando o template do html estático e rendirizando dinâmicamente em tempo de real.
 
