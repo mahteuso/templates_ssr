@@ -29,3 +29,21 @@ Construímos um formulário para a requisição POST e servimos ele usando o pro
 3) No script podemos capturar os valores do formulário
 4) Neste ponto podemos fazer o que quiser, ex: enviar e-mail ou guardar em um banco de dados
 5) Todos os prints que fazemos no CGI são retornados para o cliente, a saida padrão é impressa no stream de response.
+
+Parte 3
+---------------------------------------------------------------------------------------------------------------------------------------
+Vamos transformar nosso blog estático usando wsgi puro, ao invés de gerarmos um site estático vamos entregar os posts do banco de dados dinâmicamente.
+
+Na nossa pasta blog criamos um arquivo chamado wsgi.py com as responsabilidades abaixo:
+
+1) Uma applicação wsgi para interceptar a comunicação com o web server
+2) Uma função para renderizar os templates que já possuimos list.template.html e post.template.html
+3) Um roteamento simples de URLs usando apenas condicionais com if
+
+---------------------------------------------------------------------------------------------------------------------------------------
+Detalhes:
+
+O objeto environ que recebemos na aplicação WSGI contém as variáveis de ambiente do O.S e também algumas variáveis que existem apenas no tempo de request, algumas delas que utilizamos são:
+
+environ["REQUEST_METHOD"] - Informa qual o método da requisição (GET, POST, PUT, PATCH, DELETE)
+environ["PATH_INFO"] - Informa qual o path no cliente, ex: http://server/foo/bar/ essa variável vai conter /foo/bar/
