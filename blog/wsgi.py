@@ -1,3 +1,4 @@
+import cgi
 from database import conn
 from pathlib import Path
 
@@ -52,6 +53,20 @@ def application(environ, start_reponse):
         print(body)
         status = "200 ok"
 
+    elif path == "/new" and method == "GET":
+        body = render_template("form.template.html")
+        status = "200 ok"
+
+    elif path == "/new" and method == "POST":
+        form = cgi.FieldStorage(
+            fp=environ['wsgi.input'],
+            environ=environ,
+            keep_blank_values=1            
+        )
+        post = {item.name: item.value for item in form.list}
+        add_new_post(post)
+        body = b"Novo post criado com sucesso!"
+        status = "201 Created"
 
     # Criar o response
     headers = [("Content-type", "text/html")]
