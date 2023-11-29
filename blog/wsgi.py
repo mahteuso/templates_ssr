@@ -4,7 +4,6 @@ from pathlib import Path
 
 
 def get_post_from_database(post_id=None):
-   
     cursor = conn.cursor()
     fields = ("id", "title", "content", "author")
 
@@ -13,11 +12,13 @@ def get_post_from_database(post_id=None):
     else:
         results = cursor.execute("SELECT * FROM post;")
 
-    return [dict(zip(fields, post)) for post in results]   
+    return [dict(zip(fields, post)) for post in results]
+
 
 def render_template(template_name, **context):
     template = Path(template_name).read_text()
     return template.format(**context).encode("utf-8")
+
 
 def get_post_list(posts):
     post_list = [
@@ -25,6 +26,18 @@ def get_post_list(posts):
         for post in posts
     ]
     return "\n".join(post_list)
+
+
+def add_new_post(post):
+    cursor = conn.cursor()
+    cursor.execute(
+        """\
+            INSERT INTO post (title, content, author)
+            VALUES (:title, :content, :author)
+        """,
+        post,
+    )
+    conn.commit()
 
 
 def application(environ, start_reponse):
@@ -37,8 +50,7 @@ def application(environ, start_reponse):
     if path == "/" and method == "GET":
         posts = get_post_from_database()
         body = render_template(
-            "list.template.html",
-            post_list=get_post_list(posts)
+            "list.template.html", post_list=get_post_list(posts)
         )
         print()
         print(body)
@@ -48,7 +60,7 @@ def application(environ, start_reponse):
         post_id = path.split("/")[-1]
         body = render_template(
             "post.template.html",
-            post=get_post_from_database(post_id=post_id)[0]
+            post=get_post_from_database(post_id=post_id)[0],
         )
         print(body)
         status = "200 ok"
@@ -59,9 +71,7 @@ def application(environ, start_reponse):
 
     elif path == "/new" and method == "POST":
         form = cgi.FieldStorage(
-            fp=environ['wsgi.input'],
-            environ=environ,
-            keep_blank_values=1            
+            fp=environ["wsgi.input"], environ=environ, keep_blank_values=1
         )
         post = {item.name: item.value for item in form.list}
         add_new_post(post)

@@ -13,9 +13,11 @@ site_dir.mkdir(exist_ok=True)
 
 # 3 - Criar uma função capaz de gerar a url de um post
 
+
 def get_post_url(post):
     slug = post["title"].lower().replace(" ", "-")
     return f"{slug}.html"
+
 
 # 4 - Renderizar a página 'index.html' a partir do template
 
@@ -25,9 +27,7 @@ post_list = [
     f"<li><a href='{get_post_url(post)}'>{post['title']}</a></li>"
     for post in posts
 ]
-index_page.write_text(
-    index_template.format(post_list="\n".join(post_list))
-)
+index_page.write_text(index_template.format(post_list="\n".join(post_list)))
 
 # 5 - Renderizar as paginas do blog
 
