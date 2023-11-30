@@ -1,8 +1,11 @@
 import cgi
 from database import conn
-from pathlib import Path
+
+from jinja2 import Environment, FileSystemLoader
+env = Environment(loader=FileSystemLoader("templates"))
 
 
+    
 def get_post_from_database(post_id=None):
     cursor = conn.cursor()
     fields = ("id", "title", "content", "author")
@@ -14,18 +17,9 @@ def get_post_from_database(post_id=None):
 
     return [dict(zip(fields, post)) for post in results]
 
-
 def render_template(template_name, **context):
-    template = Path(template_name).read_text()
-    return template.format(**context).encode("utf-8")
-
-
-def get_post_list(posts):
-    post_list = [
-        f"""<li><a href="/{post['id']}">{post['title']}</a></li>"""
-        for post in posts
-    ]
-    return "\n".join(post_list)
+    template = env.get_template(template_name)
+    return template.render(**context).encode("utf-8")
 
 
 def add_new_post(post):
@@ -39,7 +33,6 @@ def add_new_post(post):
     )
     conn.commit()
 
-
 def application(environ, start_reponse):
     body = b"Content Not Found"
     status = "404 Not Found"
@@ -50,10 +43,9 @@ def application(environ, start_reponse):
     if path == "/" and method == "GET":
         posts = get_post_from_database()
         body = render_template(
-            "list.template.html", post_list=get_post_list(posts)
+            "list.template.html", post_list=posts
         )
         print()
-        print(body)
         status = "200 ok"
 
     elif path.split("/")[-1].isdigit() and method == "GET":
@@ -62,7 +54,6 @@ def application(environ, start_reponse):
             "post.template.html",
             post=get_post_from_database(post_id=post_id)[0],
         )
-        print(body)
         status = "200 ok"
 
     elif path == "/new" and method == "GET":
@@ -82,3 +73,8 @@ def application(environ, start_reponse):
     headers = [("Content-type", "text/html")]
     start_reponse(status, headers)
     return [body]
+
+if __name__ == "__main__":
+    from wsgiref.simple_server import make_server
+    server = make_server("0.0.0.0", 8000, application)
+    server.serve_forever()

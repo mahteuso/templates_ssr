@@ -1,13 +1,9 @@
 #templates_ssr
 
-Blog dinâmico com Python!
+Blog dinâmico com Jinja2!
 ---------------------------------------------------------------------------------------------------------------------------------------
-Gerando páginas HTML para um blog usando o template do html estático e rendirizando dinâmicamente em tempo de real.
+Um dos template engines mais famosos e utilizados chama-se Jinja2, ele virou um padrão para templates que é inclusive seguido fora da web como por exemplo no Ansible (ferramenta de automação de infra estrutura e configurações da Red Hat), o Jinja também inspirou o Twig do PHP, o Tera do Rust, entre outros.
 
-Efetuamos a renderização para entregar ao client o resultado do HTML.
-O blog utiliza SQLITE como banco de dados, logo, utilizamos Python para conectar a um banco de dados, criar a tabela para armazenar as postagens e alimentar com alguns posts de exemplo.
-
-O programa gera uma pasta site e podemos servir esta pasta com o servidor HTTP do Python.
 
 Parte 1:
 ---------------------------------------------------------------------------------------------------------------------------------------
@@ -22,28 +18,10 @@ Todas as etapas para fazer a renderização das postagens que estão no banco de
 Parte 2:
 ---------------------------------------------------------------------------------------------------------------------------------------
 
-Construímos um formulário para a requisição POST e servimos ele usando o protocolo CGI Common Gateway Interface.
-
-1) A tag <form> no html estrutura os campos que pretendemos receber no backend
-2) O script em Python é executado pelo webserver que tem suporte a CGI
-3) No script podemos capturar os valores do formulário
-4) Neste ponto podemos fazer o que quiser, ex: enviar e-mail ou guardar em um banco de dados
-5) Todos os prints que fazemos no CGI são retornados para o cliente, a saida padrão é impressa no stream de response.
-
-Parte 3
+Construímos um formulário para a requisição POST utilizando Macros. Uma das vantagens de usar Jinja é possibilidade de reaproveitar código HTML através de macros, que são funções definidas dentro do HTML.
 ---------------------------------------------------------------------------------------------------------------------------------------
-Vamos transformar nosso blog estático usando wsgi puro, ao invés de gerarmos um site estático vamos entregar os posts do banco de dados dinâmicamente.
 
-Na nossa pasta blog criamos um arquivo chamado wsgi.py com as responsabilidades abaixo:
-
-1) Uma applicação wsgi para interceptar a comunicação com o web server
-2) Uma função para renderizar os templates que já possuimos list.template.html e post.template.html
-3) Um roteamento simples de URLs usando apenas condicionais com if
-
----------------------------------------------------------------------------------------------------------------------------------------
 Detalhes:
 
-O objeto environ que recebemos na aplicação WSGI contém as variáveis de ambiente do O.S e também algumas variáveis que existem apenas no tempo de request, algumas delas que utilizamos são:
+Ao trabalhar com templates estabelecemos um limite sobre o que é lógica de apresentação e o que é lógica de negócio. Ex: Iterar objetos, transformar para maiusculo, adicionar opções de formatação etc, são ok de ir ao lado HTML. No caso da filtragem, ordenação, permissões etc, foram feitas no nível de função ao invés de ser feito no template.
 
-environ["REQUEST_METHOD"] - Informa qual o método da requisição (GET, POST, PUT, PATCH, DELETE)
-environ["PATH_INFO"] - Informa qual o path no cliente, ex: http://server/foo/bar/ essa variável vai conter /foo/bar/
