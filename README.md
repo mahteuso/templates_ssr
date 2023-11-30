@@ -15,9 +15,6 @@ Todas as etapas para fazer a renderização das postagens que estão no banco de
 4) Renderizamos uma página para cada post
 5) Fechamos a conexão
 
-Parte 2:
----------------------------------------------------------------------------------------------------------------------------------------
-
 Construímos um formulário para a requisição POST utilizando Macros. Uma das vantagens de usar Jinja é possibilidade de reaproveitar código HTML através de macros, que são funções definidas dentro do HTML.
 ---------------------------------------------------------------------------------------------------------------------------------------
 
