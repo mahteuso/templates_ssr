@@ -1,5 +1,7 @@
 import cgi
+import json
 from database import conn
+from wsgiref.simple_server import make_server
 
 from jinja2 import Environment, FileSystemLoader
 env = Environment(loader=FileSystemLoader("templates"))
@@ -36,6 +38,7 @@ def add_new_post(post):
 def application(environ, start_reponse):
     body = b"Content Not Found"
     status = "404 Not Found"
+    content_type = "text/html"
     path = environ["PATH_INFO"]
     method = environ["REQUEST_METHOD"]
 
@@ -45,8 +48,15 @@ def application(environ, start_reponse):
         body = render_template(
             "list.template.html", post_list=posts
         )
-        print()
+        
         status = "200 ok"
+        
+    elif path == "/api" and method == "GET":
+        posts = get_post_from_database()
+        status = "200 ok"
+        body = json.dumps(posts).encode("utf-8")
+        content_type = "application/json"
+        
 
     elif path.split("/")[-1].isdigit() and method == "GET":
         post_id = path.split("/")[-1]
@@ -70,7 +80,7 @@ def application(environ, start_reponse):
         status = "201 Created"
 
     # Criar o response
-    headers = [("Content-type", "text/html")]
+    headers = [("Content-type", content_type)]
     start_reponse(status, headers)
     return [body]
 

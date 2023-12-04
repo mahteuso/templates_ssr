@@ -1,3 +1,4 @@
+
 # 1 - Conectar com o banco de dados
 from sqlite3 import connect
 
@@ -21,7 +22,7 @@ conn.execute(
 # 3 - Criar os posts iniciais para alimentar o banco de dados
 
 posts = [
-    {
+     {
         "title": "Python é eleita a linguagem mais popular",
         "content": """\
         A linguem Python foi eleita a linguagem mais popular pela revista
@@ -37,6 +38,7 @@ posts = [
         """,
         "author": "Guido Van Rossum",
     },
+
 ]
 
 # 4 - Inserir os posts caso o banco de dados esteja vazio
@@ -52,7 +54,13 @@ if not count:
     )
     conn.commit()
 
-    # 5 - Verificar se os dados foram inseridos
+# 5 - Verificar se os dados foram inseridos
 
     posts = cursor.execute("SELECT * FROM post;")
     assert len(posts) >= 2
+
+
+
+
+
+
